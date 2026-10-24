@@ -70,8 +70,22 @@ main {
   background:linear-gradient(125deg,
     #10213c,#1c5482);
   color:#fff;
-  padding:90px 22px
+  padding:65px 22px
 }
+.hero-layout {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:35px;
+  align-items:center;
+}
+.hero-photo {
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:15px;
+  box-shadow:0 12px 35px #09172c55;
+}
+
 .wrap {
   max-width:1100px;
   margin:auto
@@ -246,6 +260,10 @@ footer a {
   color:#fff
 }
 @media(max-width:800px) {
+  .hero-layout {
+    grid-template-columns:1fr;
+  }
+
   .grid {
     grid-template-columns:repeat(2,1fr)
   }
@@ -380,6 +398,11 @@ footer a {
        無料で制作プランを作る →
       </a>
      </p>
+     </div>
+     <img class="hero-photo"
+      src="images/hero-oem.jpg"
+      alt="中国OEMでシューズを企画する
+      製造現場の参考イメージ">
     </div>
    </section>
    <section
