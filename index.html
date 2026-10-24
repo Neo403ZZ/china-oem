@@ -340,6 +340,24 @@ footer a {
   .choice-top {flex-direction:column;}
   .choice-top img {width:100%;}
 }
+  /* CHG-0011 指定TOP画像 */
+  body>header {display:none;}
+  .reference-top {
+   background:#fff;
+   width:100%;
+  }
+  .reference-top img {
+   display:block;
+   width:100%;
+   height:auto;
+  }
+  .reference-links {
+   display:flex;
+   justify-content:center;
+   flex-wrap:wrap;
+   gap:12px;
+   padding:18px;
+  }
 </style>
  </head>
  <body>
@@ -368,41 +386,20 @@ footer a {
    </div>
   </header>
   <main>
-   <section class="hero">
-    <div class="wrap">
-     <div class="eyebrow">
-      YOUR IDEA, YOUR BRAND
-     </div>
-     <h1>
-      自分のブランドを、
-      <br/>
-      10個から。
-     </h1>
-     <p>
-      シューズ・アパレル・バッグ・アクセサリー。中国の工場とつながり、
-      あなただけのオリジナル商品を作るためのOEM制作支援サイトです。
-     </p>
-     <div>
-      <span class="pill">
-       少量製造に対応した商品を探せる
-      </span>
-      <span class="pill">
-       無料で仕様作成
-      </span>
-      <span class="pill">
-       正式発注準備が整ってから決済
-      </span>
-     </div>
-     <p>
-      <a class="btn" href="#start">
-       無料で制作プランを作る →
-      </a>
-     </p>
-     </div>
-     <img class="hero-photo"
-      src="images/hero-oem.jpg"
-      alt="中国OEMでシューズを企画する
-      製造現場の参考イメージ">
+   <section class="reference-top">
+    <img
+     src="images/top-design.png"
+     alt="MY BRAND OEM トップページ。
+     靴、シャツ、バッグ、ジュエリーと
+     A・Bコースを紹介するデザイン">
+    <div class="reference-links">
+     <a class="btn" href="#categories">
+      商品カテゴリーを選ぶ
+     </a>
+     <a class="btn secondary"
+      href="#start">
+      OEM制作を始める
+     </a>
     </div>
    </section>
    <section
