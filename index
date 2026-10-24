@@ -1,1 +1,772 @@
 
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+  <meta charset="utf-8"/>
+  <meta
+    content="width=device-width, 
+    initial-scale=1"
+    name="viewport"
+  />
+  <meta
+    content="#172840"
+    name="theme-color"
+  />
+  <title>
+   MY BRAND OEM | 自分のブランドを、10個から。
+  </title>
+  <style>
+   :root {
+  --ink:#172840;
+  --muted:#617187;
+  --blue:#1767ad;
+  --bg:#f5f8fc;
+  --line:#dce4ed
+}
+* {
+  box-sizing:border-box
+}
+body {
+  margin:0;
+  font-family:system-ui,-apple-system,
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",sans-serif;
+  color:var(--ink);
+  background:#fff;
+  line-height:1.65
+}
+header {
+  position:sticky;
+  top:0;
+  z-index:4;
+  background:#fffefef5;
+  border-bottom:1px solid var(--line)
+}
+.nav {
+  max-width:1100px;
+  margin:auto;
+  padding:16px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px
+}
+.logo {
+  font-weight:900;
+  letter-spacing:1px
+}
+.logo span {
+  color:var(--blue)
+}
+nav a {
+  color:var(--ink);
+  text-decoration:none;
+  margin-left:18px;
+  font-size:14px
+}
+main {
+  overflow:hidden
+}
+.hero {
+  background:linear-gradient(125deg,
+    #10213c,#1c5482);
+  color:#fff;
+  padding:90px 22px
+}
+.wrap {
+  max-width:1100px;
+  margin:auto
+}
+.eyebrow {
+  letter-spacing:.15em;
+  font-size:12px;
+  font-weight:700;
+  color:#9edcff
+}
+h1 {
+  font-size:clamp(32px,6vw,62px);
+  line-height:1.25;
+  letter-spacing:-.035em;
+  margin:14px 0 20px
+}
+.hero p {
+  max-width:680px;
+  color:#e4eff7
+}
+.btn {
+  border:0;
+  border-radius:8px;
+  background:#287ec2;
+  color:#fff;
+  padding:13px 24px;
+  cursor:pointer;
+  font-weight:750;
+  font-size:15px;
+  display:inline-block;
+  text-decoration:none
+}
+.btn:hover {
+  background:#12639f
+}
+.btn.secondary {
+  background:#fff;
+  color:var(--ink);
+  border:1px solid var(--line)
+}
+.hero .btn {
+  background:#fff;
+  color:#123659;
+  margin-top:15px
+}
+.pill {
+  display:inline-block;
+  border:1px solid #a7bdd2;
+  border-radius:99px;
+  padding:5px 12px;
+  font-size:12px;
+  margin:14px 7px 0 0
+}
+.section {
+  padding:68px 22px
+}
+.alt {
+  background:var(--bg)
+}
+.section h2 {
+  font-size:clamp(25px,4vw,35px);
+  line-height:1.3;
+  margin:0 0 10px
+}
+.desc {
+  color:var(--muted);
+  margin:0 0 26px
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px
+}
+.card {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:24px;
+  box-shadow:0 5px 25px #19375b09
+}
+.symbol {
+  font-size:40px
+}
+.card h3 {
+  margin:10px 0 8px
+}
+.card p {
+  color:var(--muted);
+  font-size:14px
+}
+.courses {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px
+}
+.tag {
+  font-size:12px;
+  color:#155b93;
+  background:#e8f3ff;
+  padding:5px 10px;
+  border-radius:99px
+}
+.steps {
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px
+}
+.step {
+  background:white;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:18px
+}
+.num {
+  font-weight:900;
+  color:#247abc
+}
+.step p {
+  font-size:12px;
+  color:var(--muted)
+}
+.form {
+  max-width:800px;
+  margin:auto;
+  background:white;
+  padding:28px;
+  border-radius:16px;
+  border:1px solid var(--line)
+}
+label {
+  font-weight:700;
+  font-size:14px;
+  display:block;
+  margin-bottom:6px
+}
+input,select,textarea {
+  width:100%;
+  background:#fff;
+  color:var(--ink);
+  border:1px solid #b8c7d8;
+  border-radius:8px;
+  padding:12px;
+  font:inherit;
+  margin-bottom:17px
+}
+textarea {
+  min-height:100px
+}
+.two {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px
+}
+.status {
+  background:#ebf7ef;
+  color:#175b32;
+  padding:12px;
+  border-radius:8px;
+  display:none
+}
+.notice {
+  font-size:13px;
+  color:var(--muted)
+}
+footer {
+  background:#10213c;
+  color:#e3ebf2;
+  padding:35px 22px;
+  font-size:13px
+}
+footer a {
+  color:#fff
+}
+@media(max-width:800px) {
+  .grid {
+    grid-template-columns:repeat(2,1fr)
+  }
+  .steps {
+    grid-template-columns:repeat(2,1fr)
+  }
+  nav {
+    display:none
+  }
+  .courses {
+    grid-template-columns:1fr
+  }
+}
+@media(max-width:520px) {
+  .grid,.two {
+    grid-template-columns:1fr
+  }
+  .hero {
+    padding:70px 22px
+  }
+  .section {
+    padding:52px 20px
+  }
+}
+  </style>
+ </head>
+ <body>
+  <header>
+   <div class="nav">
+    <div class="logo">
+     MY BRAND
+     <span>
+      OEM
+     </span>
+    </div>
+    <nav>
+     <a href="#categories">
+      商品カテゴリー
+     </a>
+     <a href="#courses">
+      制作コース
+     </a>
+     <a href="#steps">
+      制作の流れ
+     </a>
+     <a href="#start">
+      制作を始める
+     </a>
+    </nav>
+   </div>
+  </header>
+  <main>
+   <section class="hero">
+    <div class="wrap">
+     <div class="eyebrow">
+      YOUR IDEA, YOUR BRAND
+     </div>
+     <h1>
+      自分のブランドを、
+      <br/>
+      10個から。
+     </h1>
+     <p>
+      シューズ・アパレル・バッグ・アクセサリー。中国の工場とつながり、
+      あなただけのオリジナル商品を作るためのOEM制作支援サイトです。
+     </p>
+     <div>
+      <span class="pill">
+       少量製造に対応した商品を探せる
+      </span>
+      <span class="pill">
+       無料で仕様作成
+      </span>
+      <span class="pill">
+       正式発注準備が整ってから決済
+      </span>
+     </div>
+     <p>
+      <a class="btn" href="#start">
+       無料で制作プランを作る →
+      </a>
+     </p>
+    </div>
+   </section>
+   <section
+     class="section"
+     id="categories"
+   >
+    <div class="wrap">
+     <h2>
+      作りたい商品を選ぶ
+     </h2>
+     <p class="desc">
+      まずは4つのカテゴリーから。取扱商品は順次拡大予定です。
+     </p>
+     <div class="grid">
+      <article class="card">
+       <div class="symbol">
+        👟
+       </div>
+       <h3>
+        靴・シューズ
+       </h3>
+       <p>
+        スニーカー、革靴、ブーツ、サンダル
+       </p>
+      </article>
+      <article class="card">
+       <div class="symbol">
+        👕
+       </div>
+       <h3>
+        シャツ・衣料品
+       </h3>
+       <p>
+        Tシャツ、ポロシャツ、パーカー
+       </p>
+      </article>
+      <article class="card">
+       <div class="symbol">
+        👜
+       </div>
+       <h3>
+        バッグ
+       </h3>
+       <p>
+        トート、ショルダー、リュック
+       </p>
+      </article>
+      <article class="card">
+       <div class="symbol">
+        💍
+       </div>
+       <h3>
+        アクセサリー
+       </h3>
+       <p>
+        リング、ネックレス、ブレスレット
+       </p>
+      </article>
+     </div>
+    </div>
+   </section>
+   <section
+     class="section alt"
+     id="courses"
+   >
+    <div class="wrap">
+     <h2>
+      2つのOEM制作コース
+     </h2>
+     <p class="desc">
+      初めての方から本格的な商品開発まで対応します。
+     </p>
+     <div class="courses">
+      <article class="card">
+       <span class="tag">
+        Aコース｜はじめてのブランド
+       </span>
+       <h3>
+        既製品にロゴを入れる
+       </h3>
+       <p>
+        既製品をベースに、ロゴやタグ、
+        カラーなど工場が対応可能な部分をカスタマイズ。
+        10個から作れる商品を優先して探します。
+       </p>
+      </article>
+      <article class="card">
+       <span class="tag">
+        Bコース｜本格オリジナル
+       </span>
+       <h3>
+        デザインから商品を作る
+       </h3>
+       <p>
+        形状、素材、構造、サイズなどを指定して開発。
+        試作費や最低製造数は工場の確認後にお知らせします。
+       </p>
+      </article>
+     </div>
+    </div>
+   </section>
+   <section class="section" id="steps">
+    <div class="wrap">
+     <h2>
+      制作の流れ
+     </h2>
+     <p class="desc">
+      お支払いは、仕様・正式見積もり・製造条件が揃ってから。
+     </p>
+     <div class="steps">
+      <div class="step">
+       <div class="num">
+        01
+       </div>
+       <strong>
+        カテゴリー選択
+       </strong>
+       <p>
+        作りたい商品を選ぶ
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        02
+       </div>
+       <strong>
+        コース選択
+       </strong>
+       <p>
+        AまたはBを選択
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        03
+       </div>
+       <strong>
+        ブランド設定
+       </strong>
+       <p>
+        ブランド名・ロゴなど
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        04
+       </div>
+       <strong>
+        仕様作成
+       </strong>
+       <p>
+        数量・素材・サイズ・色
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        05
+       </div>
+       <strong>
+        見積もり依頼
+       </strong>
+       <p>
+        工場の対応条件を確認
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        06
+       </div>
+       <strong>
+        最終仕様確定
+       </strong>
+       <p>
+        製造内容・総額を承認
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        07
+       </div>
+       <strong>
+        決済
+       </strong>
+       <p>
+        最終承認後にお支払い
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        08
+       </div>
+       <strong>
+        工場正式発注
+       </strong>
+       <p>
+        入金を確認して発注
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        09
+       </div>
+       <strong>
+        製造・検品
+       </strong>
+       <p>
+        品質と仕上がりを確認
+       </p>
+      </div>
+      <div class="step">
+       <div class="num">
+        10
+       </div>
+       <strong>
+        配送・納品
+       </strong>
+       <p>
+        日本にお届け
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section
+     class="section alt"
+     id="start"
+   >
+    <div class="wrap">
+     <h2 style="text-align:center">
+      制作プランを作成する
+     </h2>
+     <p
+       class="desc"
+       style="text-align:center"
+     >
+      まずは希望を入力。サンプル版ではブラウザー内に一時保存できます。
+     </p>
+     <div class="form">
+      <form id="plan">
+       <div class="two">
+        <div>
+         <label for="category">
+          商品カテゴリー
+         </label>
+         <select
+           id="category"
+           required=""
+         >
+          <option value="">
+           選択してください
+          </option>
+          <option>
+           靴・シューズ
+          </option>
+          <option>
+           シャツ・衣料品
+          </option>
+          <option>
+           バッグ
+          </option>
+          <option>
+           アクセサリー
+          </option>
+         </select>
+        </div>
+        <div>
+         <label for="course">
+          制作コース
+         </label>
+         <select
+           id="course"
+           required=""
+         >
+          <option>
+           A：既製品＋ロゴ
+          </option>
+          <option>
+           B：オリジナルデザイン
+          </option>
+         </select>
+        </div>
+       </div>
+       <div class="two">
+        <div>
+         <label for="brand">
+          ブランド名
+         </label>
+         <input
+           id="brand"
+           maxlength="60"
+           placeholder="例：MY BRAND"
+         />
+        </div>
+        <div>
+         <label for="qty">
+          希望個数（10個以上）
+         </label>
+         <input
+           id="qty"
+           min="10"
+           required=""
+           step="1"
+           type="number"
+           value="10"
+         />
+        </div>
+       </div>
+       <label for="details">
+        希望する商品・ロゴ・素材など
+       </label>
+       <textarea
+         id="details"
+         placeholder="希望の商品やロゴ位置、"
+       ></textarea>
+       <button
+         class="btn"
+         type="submit"
+       >
+        この端末に制作プランを保存
+       </button>
+       <button
+         class="btn secondary"
+         id="export"
+         type="button"
+       >
+        内容をテキストで保存
+       </button>
+       <div
+         class="status"
+         id="status"
+         role="status"
+       >
+       </div>
+       <p class="notice">
+        これは公開用の初期デモです。
+        フォーム内容はサーバーには送信されず、
+        この端末のブラウザーにのみ保存されます。現在は正式見積もり・
+        工場発注・決済はできません。10個の製造可否は商品・
+        工場により異なります。
+       </p>
+      </form>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <div class="wrap">
+    <strong>
+     MY BRAND OEM
+    </strong>
+    <p>
+     個人向けオリジナルブランド制作支援サイト｜初期デモ
+    </p>
+    <p>
+     正式運営開始前に、事業者情報・特定商取引法表記・利用規約・
+     プライバシーポリシーを掲載します。
+    </p>
+   </div>
+  </footer>
+  <script>
+   const ids = [
+     'category', 'course',
+     'brand', 'qty', 'details'
+   ];
+   const key = 'mybrand-oem-demo-plan';
+   const read = () =>
+     Object.fromEntries(
+       ids.map(id => [
+         id,
+         document.getElementById(id)
+           .value
+       ])
+     );
+
+   try {
+     const saved = JSON.parse(
+       localStorage.getItem(key)
+         || 'null'
+     );
+     if (saved) {
+       ids.forEach(id => {
+         if (saved[id] !== undefined) {
+           document.getElementById(id)
+             .value = saved[id];
+         }
+       });
+     }
+   } catch (_) {
+     // 保存情報が不正なら無視
+   }
+
+   document.getElementById('plan')
+     .addEventListener('submit', e => {
+       e.preventDefault();
+       if (!e.target.reportValidity()) {
+         return;
+       }
+       localStorage.setItem(
+         key, JSON.stringify(read())
+       );
+       const status =
+         document.getElementById(
+           'status'
+         );
+       status.textContent =
+         '制作プランをこの端末に保存しました。';
+       status.style.display = 'block';
+     });
+
+   document.getElementById('export')
+     .addEventListener('click', () => {
+       const data = read();
+       const fields = {
+         '商品カテゴリー': data.category,
+         '制作コース': data.course,
+         'ブランド名': data.brand,
+         '希望数量': data.qty + '個',
+         '詳細希望': data.details
+       };
+       const body =
+         'OEM制作プラン（下書き）\n\n' +
+         Object.entries(fields)
+           .map(([a, b]) => a + '：' + b)
+           .join('\n');
+       const a = document
+         .createElement('a');
+       a.href = URL.createObjectURL(
+         new Blob([body], {
+           type:
+             'text/plain;charset=utf-8'
+         })
+       );
+       a.download = 'OEM制作プラン.txt';
+       a.click();
+       setTimeout(() => {
+         URL.revokeObjectURL(a.href);
+       }, 500);
+     });
+  </script>
+ </body>
+</html>
