@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>靴のOEM制作 | MY BRAND OEM</title>
+<style>
+:root{--navy:#172840;--blue:#1767ad;--line:#dce4ed;--gray:#627286}*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Yu Gothic",sans-serif;color:var(--navy);line-height:1.7;background:#f6f8fc}
+header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-decoration:none}main{max-width:960px;margin:auto;padding:28px 18px 70px}h1{font-size:clamp(27px,5vw,42px)}h2{margin-top:0;font-size:22px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin:18px 0}.notice{background:#fff5d9;padding:13px 16px;border-radius:10px;font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:block;font-weight:700;margin:12px 0 5px}input,select,textarea{width:100%;border:1px solid #b5c5d6;border-radius:7px;padding:10px;font:inherit}textarea{min-height:95px}button,.btn{background:var(--blue);border:none;border-radius:8px;padding:12px 17px;color:white;cursor:pointer;text-decoration:none;display:inline-block;font-size:15px}button.secondary{background:#e9eff6;color:var(--navy)}.muted{color:var(--gray);font-size:14px}.row{display:flex;gap:12px;flex-wrap:wrap}.status{font-weight:700}footer{padding:30px;text-align:center;color:var(--gray)}@media(max-width:640px){.grid{grid-template-columns:1fr}.card{padding:18px}}
+</style></head><body>
+<header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a></header>
+<main>
+<p class="muted">靴カテゴリー / SHOES-001 / 入力デモ</p>
+<h1>自分だけのスニーカーをつくる</h1>
+<p>10足からの製作を目標に、色・素材・ロゴだけの変更から、甲のデザイン変更まで相談できます。</p>
+<div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。入力データはこのブラウザ内にのみ保存されます。</div>
+<section class="card"><h2>選べる製作方法</h2>
+<div class="grid"><div><strong>A｜簡単カスタマイズ</strong><p>工場の既存スニーカーを使い、素材・カラー・ロゴを変更します。</p></div><div><strong>B｜デザインカスタマイズ</strong><p>既存木型・靴底を利用し、甲の形状・パーツ・縫製も相談します。</p></div></div>
+<p class="muted">新規木型・新規靴底金型などのフルオリジナルは別途個別相談です。</p></section>
+<section class="card"><h2>スニーカー制作プラン</h2>
+<form id="shoe-form">
+<div class="grid"><div><label for="mode">製作方法</label><select id="mode"><option>A：簡単カスタマイズ</option><option>B：デザインカスタマイズ</option></select></div>
+<div><label for="brand">ブランド名</label><input id="brand" maxlength="60" placeholder="例：MY BRAND"></div>
+<div><label for="color">カラー（1案件1色）</label><input id="color" maxlength="40" placeholder="例：ブラック"></div>
+<div><label for="material">アッパー素材</label><select id="material"><option>工場の既存素材から選択</option><option>天然皮革</option><option>合成皮革</option><option>メッシュ</option><option>キャンバス</option><option>希望素材を自由指定・工場確認</option><option>AIによる素材提案を希望（準備中）</option></select></div>
+<div><label for="logo">ロゴ配置位置</label><select id="logo"><option>なし／未定</option><option>靴の側面</option><option>シュータン</option><option>かかと</option><option>中敷き</option><option>自由指定（詳細欄へ）</option></select></div>
+<div><label for="pack">靴箱・包装</label><select id="pack"><option>通常の靴箱</option><option>ロゴ入り靴箱</option><option>フルオリジナル靴箱</option><option>その他包装・付属品を希望</option></select></div></div>
+<h3>サイズ別数量</h3><p class="muted">合計10足以上を希望数として入力。サイズごとの製作可否は工場確認が必要です。</p>
+<div class="grid" id="sizes"></div><p class="status" id="total">合計：10足</p>
+<label for="details">希望デザイン・素材・ロゴ・包装の詳細</label><textarea id="details" placeholder="スニーカーのイメージや希望を入力"></textarea>
+<label for="files">参考写真・ロゴ・資料（画面上でファイル名のみ確認）</label><input id="files" type="file" accept="image/*,.pdf,.txt" multiple><p id="file-names" class="muted">未選択</p>
+<div class="row"><button type="submit">この端末に下書きを保存</button><button type="button" class="secondary" id="export">仕様をTXT出力</button></div>
+<p class="muted" id="feedback" role="status"></p><p class="muted">ファイル本体は保存・送信されません。画面を閉じると添付は消えます。画像をAI生成する機能は今後実装します。</p>
+</form></section>
+<section class="card"><h2>今後提供予定の機能</h2>
+<p>AIデザイン生成（1案件5回無料・追加5回500円税込）、日本語・中国語PDF、会員別クラウド保存、複数工場比較、段階別承認・決済、第三者全数検品、品質保証、分割配送、再注文、ブランド紹介ページ。</p>
+<p class="muted">これらは決定済みの仕様方針ですが、このデモでは未実装です。品質保証の詳細条件・工場対応・法令適合は正式運用前に確定します。</p></section>
+</main><footer>MY BRAND OEM｜靴カテゴリー仕様 SHOES-001</footer>
+<script>
+(()=>{"use strict";const $=id=>document.getElementById(id),sizes=["23.0","23.5","24.0","24.5","25.0","25.5","26.0","26.5","27.0","27.5","28.0"];
+const fields=["mode","brand","color","material","logo","pack","details"];const key="mybrand-shoes001-plan";
+sizes.forEach((size,i)=>{const div=document.createElement("div"),lab=document.createElement("label"),input=document.createElement("input");input.type="number";input.min="0";input.max="999";input.step="1";input.value=i===6?"10":"0";input.id="size-"+size;lab.htmlFor=input.id;lab.textContent=size+" cm（足数）";input.addEventListener("input",render);div.append(lab,input);$("sizes").append(div)});
+function count(){return sizes.reduce((sum,s)=>sum+(Number($("size-"+s).value)||0),0)}
+function render(){$("total").textContent="合計："+count()+"足"+(count()<10?"（10足未満）":"")}
+function get(){return {fields:Object.fromEntries(fields.map(i=>[i,$(i).value])),sizes:Object.fromEntries(sizes.map(s=>[s,$("size-"+s).value]))}}
+try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){fields.forEach(i=>{if(saved.fields?.[i]!==undefined)$(i).value=saved.fields[i]});sizes.forEach(s=>{if(saved.sizes?.[s]!==undefined)$("size-"+s).value=saved.sizes[s]})}}catch(e){}render();
+$("files").addEventListener("change",()=>{$("file-names").textContent=Array.from($("files").files).map(f=>f.name).join("、")||"未選択"});
+$("shoe-form").addEventListener("submit",e=>{e.preventDefault();if(sizes.some(s=>!Number.isInteger(Number($("size-"+s).value))||Number($("size-"+s).value)<0))){$("feedback").textContent="数量は0以上の整数にしてください。";return}if(count()<10){$("feedback").textContent="合計10足以上で入力してください。";return}try{localStorage.setItem(key,JSON.stringify(get()));$("feedback").textContent="下書きをこの端末に保存しました。添付ファイル本体は保存されません。"}catch(e){$("feedback").textContent="保存できませんでした。端末の保存設定を確認してください。"}});
+$("export").addEventListener("click",()=>{const data=get(),text="SHOES-001 制作プラン（下書き）\n\n"+Object.entries(data.fields).map(([a,b])=>a+"： "+b).join("\n")+"\n\nサイズ別数量：\n"+Object.entries(data.sizes).filter(([k,v])=>Number(v)>0).map(([k,v])=>k+"cm： "+v+"足").join("\n")+"\n合計： "+count()+"足\n※工場見積・製造可否未確認";const u=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="SHOES-001_制作プラン.txt";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
+})();
+</script></body></html>
