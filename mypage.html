@@ -69,7 +69,7 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
    }
    lastUid=uid;
    try{if(uid)sessionStorage.setItem("mybrand-active-user-uid",uid);else sessionStorage.removeItem("mybrand-active-user-uid")}catch(e){}
-   $("login").disabled=!!user;$("logout").disabled=!user;$("create").disabled=!user;
+   $("login").disabled=!!user;$("logout").disabled=!user;$("create").disabled=true;
    $("projects").replaceChildren();
    if(!user){state.textContent="未ログインです。Googleでログインしてください。";return}
    state.textContent="ログイン中："+(user.displayName||user.email||"アカウント");
@@ -77,6 +77,7 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
     const q=query(collection(db,"users",user.uid,"projects"),orderBy("createdAt","desc"));
     const docs=await getDocs(q);
     if(token!==refreshToken||auth.currentUser?.uid!==uid)return;
+    $("create").disabled=false;
     if(!docs.size){const li=document.createElement("li");li.textContent="保存された案件はありません。";$("projects").append(li)}
     docs.forEach(d=>{
      const li=document.createElement("li"),title=document.createElement("strong");
@@ -95,7 +96,7 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
      }else{li.append(document.createTextNode("（仕様データなし）"))}
      $("projects").append(li)
     })
-   }catch(e){error(e)}
+   }catch(e){if(token===refreshToken)error(e)}
   }
   $("login").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(error);
   $("logout").onclick=async()=>{try{await signOut(auth);clearDeviceDraft();$("projects").replaceChildren();state.textContent="ログアウトしました。端末に保存した靴の下書きも消去しました。";}catch(e){error(e)}};
@@ -104,8 +105,9 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
    const name=$("project-name").value.trim();
    if(!name){$("save-feedback").textContent="案件名を入力してください。";return}
    $("create").disabled=true;
-   try{const draft=localDraft()||"";await addDoc(collection(db,"users",auth.currentUser.uid,"projects"),{name:name.slice(0,80),category:"shoes",status:"draft",shoeDraft:draft,createdAt:serverTimestamp()});$("project-name").value="";$("save-feedback").textContent="クラウド保存完了："+name+(draft?"（靴の仕様も保存）":"（案件名のみ）");await refresh(auth.currentUser)}
-   catch(e){error(e)}finally{$("create").disabled=!auth.currentUser}
+   const savingUid=auth.currentUser.uid;
+   try{const draft=localDraft()||"";await addDoc(collection(db,"users",savingUid,"projects"),{name:name.slice(0,80),category:"shoes",status:"draft",shoeDraft:draft,createdAt:serverTimestamp()});if(auth.currentUser?.uid!==savingUid)return;$("project-name").value="";$("save-feedback").textContent="クラウド保存完了："+name+(draft?"（靴の仕様も保存）":"（案件名のみ）");await refresh(auth.currentUser)}
+   catch(e){if(auth.currentUser?.uid===savingUid)error(e)}finally{$("create").disabled=!auth.currentUser}
   };
   onAuthStateChanged(auth,refresh,error);
  }catch(e){state.textContent="Firebase接続でエラーが発生しました："+(e.message||e);state.className="error"}
