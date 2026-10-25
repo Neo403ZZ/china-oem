@@ -26,7 +26,7 @@ function validateDraft(text){
   if(!data||!data.fields||!data.sizes)return null;
   const fields=Object.fromEntries(shoeFields.map(k=>[k,String(data.fields[k]??"").slice(0,1000)]));
   const sizes=Object.fromEntries(shoeSizes.map(k=>[k,String(data.sizes[k]??"0")]));
-  if(shoeSizes.some(k=>!/^\\d{1,3}$/.test(sizes[k])))return null;
+  if(shoeSizes.some(k=>!/^\d{1,3}$/.test(sizes[k])))return null;
   const cleaned=JSON.stringify({fields,sizes});
   return cleaned.length<=6000?cleaned:null;
  }catch{return null}
