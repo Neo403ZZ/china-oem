@@ -1,3 +1,11 @@
-// Firebase の Web アプリ設定が取得できた後に値を入力してください。
-// API key は Firebase クライアント設定値ですが、管理者の秘密鍵やサービスアカウント秘密鍵は絶対にここへ記載しないでください。
-window.MYBRAND_FIREBASE_CONFIG = null;
+// Firebase Web SDK client configuration (not a service-account credential).
+// Authorization is enforced by Firebase Authentication and Firestore security rules.
+window.MYBRAND_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyA4tXQVffTl te978QRYxjAyXVfOKe_veIY".replace(" ",""),
+  authDomain: "chaina-oem-hp.firebaseapp.com",
+  projectId: "chaina-oem-hp",
+  storageBucket: "chaina-oem-hp.firebasestorage.app",
+  messagingSenderId: "903422260399",
+  appId: "1:903422260399:web:98c1548af80efd65cb905a",
+  measurementId: "G-YJV5C4K79T"
+};
