@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>マイページ | MY BRAND OEM</title>
+<style>body{margin:0;font:16px/1.7 system-ui,"Yu Gothic",sans-serif;background:#f5f7fb;color:#172840}header{background:#10213c;color:white;padding:20px}header a{color:white}main{max-width:840px;margin:35px auto;padding:0 18px}.card{background:white;border:1px solid #dce4ed;border-radius:12px;padding:24px;margin:18px 0}button{background:#1767ad;color:white;border:0;padding:11px 18px;border-radius:8px;cursor:pointer;margin:4px}button:disabled{background:#9baab7;cursor:not-allowed}input{padding:10px;border:1px solid #becbd8;border-radius:6px;width:100%;box-sizing:border-box}label{display:block;margin:10px 0}a{color:#1767ad}.muted{color:#607082}li{margin:8px 0}.error{color:#a42c2c}#projects{padding:0;list-style:none}#projects li{padding:12px;border-bottom:1px solid #ddd}</style></head>
+<body><header><a href="index.html">← MY BRAND OEM｜TOP</a></header><main>
+<p class="muted">会員マイページ｜クラウド保存開発準備版 v0.1</p><h1>マイページ</h1>
+<div class="card"><h2>Googleアカウントでログイン</h2>
+<p id="state" role="status">接続設定を確認しています…</p>
+<button id="login" disabled>Googleでログイン</button><button id="logout" disabled>ログアウト</button>
+<p class="muted">Firebaseプロジェクト・Googleログイン設定・アクセス制御の設定完了後に有効になります。現時点でログインやクラウド保存は提供していません。</p></div>
+<div class="card"><h2>あなたの制作案件</h2><label>案件名<input id="project-name" maxlength="80" placeholder="例：スニーカー第1弾"></label>
+<button id="create" disabled>新規案件をクラウド保存</button><ul id="projects"><li>ログイン後、本人の案件のみ表示します。</li></ul>
+<p class="muted">案件データはログイン中ユーザー固有の領域に保存する設計です。写真のクラウドアップロードは未実装です。</p></div>
+<div class="card"><h2>すでに利用できる機能</h2><p><a href="shoes.html">靴カテゴリーの仕様作成・端末内の下書き保存はこちら</a></p></div>
+</main>
+<script src="firebase-config.js"></script><script type="module">
+const $=id=>document.getElementById(id),state=$("state");
+const config=window.MYBRAND_FIREBASE_CONFIG;
+if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("YOUR_")){
+ state.textContent="クラウド接続は準備中です。現在、ログイン・オンライン保存は利用できません。";
+}else{
+ try{
+  const [{initializeApp},{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged},{getFirestore,collection,addDoc,getDocs,serverTimestamp,query,orderBy}] =
+  await Promise.all([
+   import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"),
+   import("https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js"),
+   import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js")
+  ]);
+  const app=initializeApp(config),auth=getAuth(app),db=getFirestore(app);
+  const error=e=>{state.textContent="処理できませんでした："+(e.code||e.message||"不明なエラー");state.className="error"};
+  async function refresh(user){
+   $("login").disabled=!!user;$("logout").disabled=!user;$("create").disabled=!user;
+   $("projects").replaceChildren();
+   if(!user){state.textContent="未ログインです。Googleでログインしてください。";return}
+   state.textContent="ログイン中："+(user.displayName||user.email||"アカウント");
+   try{
+    const q=query(collection(db,"users",user.uid,"projects"),orderBy("createdAt","desc"));
+    const docs=await getDocs(q);
+    if(!docs.size){const li=document.createElement("li");li.textContent="保存された案件はありません。";$("projects").append(li)}
+    docs.forEach(d=>{const li=document.createElement("li");li.textContent=(d.data().name||"無題の案件")+"（"+d.id+"）";$("projects").append(li)})
+   }catch(e){error(e)}
+  }
+  $("login").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(error);
+  $("logout").onclick=()=>signOut(auth).catch(error);
+  $("create").onclick=async()=>{
+   if(!auth.currentUser){state.textContent="ログインしてください。";return}
+   const name=$("project-name").value.trim();
+   if(!name){state.textContent="案件名を入力してください。";return}
+   $("create").disabled=true;
+   try{await addDoc(collection(db,"users",auth.currentUser.uid,"projects"),{name:name.slice(0,80),category:"shoes",status:"draft",createdAt:serverTimestamp()});$("project-name").value="";await refresh(auth.currentUser)}
+   catch(e){error(e)}finally{$("create").disabled=!auth.currentUser}
+  };
+  onAuthStateChanged(auth,refresh,error);
+ }catch(e){state.textContent="Firebase接続でエラーが発生しました："+(e.message||e);state.className="error"}
+}
+</script></body></html>
