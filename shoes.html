@@ -7,7 +7,7 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 </style></head><body>
 <header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a>　|　<a href="mypage.html">マイページ・クラウド保存</a></header>
 <main>
-<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.0 クラウド連携案内</p>
+<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.1 見積準備チェック</p>
 <h1>自分だけのスニーカーをつくる</h1>
 <p>10足からの製作を目標に、色・素材・ロゴだけの変更から、甲のデザイン変更まで相談できます。</p>
 <div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。この画面では端末に下書きを保存します。その後マイページからGoogleログインしてクラウドに案件登録できます。画像のクラウド保存は未実装です。</div>
@@ -64,6 +64,10 @@ window.updateShoeSpec=function(){
 window.updateShoeSpec();
 
 </script></section>
+<section class="card"><h2>工場見積の事前チェック（準備機能）</h2><p class="muted">入力済みの制作仕様から見積依頼のための確認票を作成します。工場への自動送信や正式発注は行いません。</p>
+<button type="button" id="quote-check">見積準備をチェック</button> <button type="button" class="secondary" id="quote-export">見積確認票をTXTで保存</button>
+<p id="quote-result" role="status" class="notice">見積準備の入力を確認できます。</p><pre id="quote-preview" class="preview" aria-live="polite"></pre>
+<p class="muted">数量10足は希望条件です。実際の最低製造数量・単価・納期・素材・サンプル代・輸送・関税は工場確認が必要です。</p></section>
 <section class="card"><h2>今後提供予定の機能</h2>
 <p>AIデザイン生成（1案件5回無料・追加5回500円税込）、日本語・中国語PDF、会員別クラウド保存、複数工場比較、段階別承認・決済、第三者全数検品、品質保証、分割配送、再注文、ブランド紹介ページ。</p>
 <p class="muted">これらは決定済みの仕様方針ですが、このデモでは未実装です。品質保証の詳細条件・工場対応・法令適合は正式運用前に確定します。</p></section>
@@ -78,6 +82,28 @@ function preview(){if(!$("spec-preview"))return;const x=fields.map(id=>id+"： "
 try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){fields.forEach(i=>{if(saved.fields?.[i]!==undefined)$(i).value=saved.fields[i]});sizes.forEach(s=>{if(saved.sizes?.[s]!==undefined)$("size-"+s).value=saved.sizes[s]})}}catch(e){}render();if(window.updateShoeSpec)window.updateShoeSpec();
 $("shoe-form").addEventListener("submit",e=>{e.preventDefault();if(sizes.some(s=>!Number.isInteger(Number($("size-"+s).value))||Number($("size-"+s).value)<0)){$("feedback").textContent="数量は0以上の整数にしてください。";return}if(count()<10){$("feedback").textContent="合計10足以上で入力してください。";return}try{localStorage.setItem(key,JSON.stringify(get()));$("feedback").textContent="下書きをこの端末に保存しました。添付ファイル本体は保存されません。"}catch(e){$("feedback").textContent="保存できませんでした。端末の保存設定を確認してください。"}});
 $("export").addEventListener("click",()=>{const data=get(),text="SHOES-001 制作プラン（下書き）\n\n"+Object.entries(data.fields).map(([a,b])=>a+"： "+b).join("\n")+"\n\nサイズ別数量：\n"+Object.entries(data.sizes).filter(([k,v])=>Number(v)>0).map(([k,v])=>k+"cm： "+v+"足").join("\n")+"\n合計： "+count()+"足\n※工場見積・製造可否未確認";const u=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="SHOES-001_制作プラン.txt";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
+function quoteText(){
+ const d=get(),total=count();
+ const qty=sizes.filter(k=>Number(d.sizes[k])>0).map(k=>k+"cm "+d.sizes[k]+"足").join("、");
+ return ["SHOES-001 工場見積 事前確認票（未送信・未発注）","ブランド名："+d.fields.brand,"製作方法："+d.fields.mode,"希望カラー："+d.fields.color,"素材："+d.fields.material,"ロゴ位置："+d.fields.logo,"梱包："+d.fields.pack,"希望詳細："+d.fields.details,"希望合計："+total+"足","サイズ別："+qty,"確認事項：製造可否、工場MOQ、サンプル・量産単価、納期、品質基準、梱包、輸送、関税","写真・ロゴファイルは本TXTに添付されません。","この確認票は工場へ自動送信されません。"].join("\n");
+}
+function updateQuote(){
+ const d=get(),invalid=sizes.some(k=>{const n=Number(d.sizes[k]);return !Number.isInteger(n)||n<0});
+ const issues=[];
+ if(!d.fields.brand.trim())issues.push("ブランド名");
+ if(!d.fields.color.trim())issues.push("カラー");
+ if(invalid||count()<10)issues.push("希望数量（合計10足以上・整数）");
+ $("quote-result").textContent=issues.length?"要確認："+issues.join("、"):"入力の基本条件は確認済み。工場の製造可否・価格・MOQは未確認です。";
+ $("quote-preview").textContent=quoteText();
+ return issues.length===0;
+}
+$("quote-check").addEventListener("click",updateQuote);
+$("quote-export").addEventListener("click",()=>{
+ if(!updateQuote()){alert("ブランド名・カラー・数量を確認してください。");return}
+ const url=URL.createObjectURL(new Blob([quoteText()],{type:"text/plain;charset=utf-8"}));
+ const a=document.createElement("a");a.href=url;a.download="SHOES-001_工場見積事前確認票.txt";a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
 fields.forEach(id=>$(id).addEventListener("input",preview));preview();
 })();
 </script></body></html>
