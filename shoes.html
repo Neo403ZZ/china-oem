@@ -41,7 +41,27 @@ function count(){return sizes.reduce((sum,s)=>sum+(Number($("size-"+s).value)||0
 function render(){$("total").textContent="合計："+count()+"足"+(count()<10?"（10足未満）":"");preview()}
 function preview(){if(!$("spec-preview"))return;const x=fields.map(id=>id+"： "+$(id).value).join("\n");$("spec-preview").textContent="SHOES-001 / 仮仕様書\n"+x+"\n\n数量： "+count()+"足\n"+sizes.filter(s=>Number($("size-"+s).value)>0).map(s=>s+"cm： "+$("size-"+s).value+"足").join("、")+"\n製作可否・価格・納期：未確認"}function get(){return {fields:Object.fromEntries(fields.map(i=>[i,$(i).value])),sizes:Object.fromEntries(sizes.map(s=>[s,$("size-"+s).value]))}}
 try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){fields.forEach(i=>{if(saved.fields?.[i]!==undefined)$(i).value=saved.fields[i]});sizes.forEach(s=>{if(saved.sizes?.[s]!==undefined)$("size-"+s).value=saved.sizes[s]})}}catch(e){}render();
-$("files").addEventListener("change",()=>{const files=Array.from($("files").files),container=$("file-previews");container.replaceChildren();$("file-names").textContent=files.map(f=>f.name).join("、")||"未選択";files.filter(f=>f.type.startsWith("image/")).slice(0,10).forEach(f=>{const url=URL.createObjectURL(f),img=document.createElement("img");img.alt=f.name;img.src=url;img.onload=()=>URL.revokeObjectURL(url);container.append(img)})});
+$("files").addEventListener("change",()=>{
+ const files=Array.from($("files").files),container=$("file-previews"),info=$("file-names");
+ container.replaceChildren();
+ if(!files.length){info.textContent="未選択";return}
+ const allowed=/\.(jpe?g|png|gif|webp|bmp|avif|heic|heif)$/i;
+ const imgs=files.filter(f=>f.type.startsWith("image/")||allowed.test(f.name)).slice(0,10);
+ info.textContent=files.length+"個のファイルを選択（画像 "+imgs.length+"枚）";
+ if(!imgs.length){info.textContent+="。JPGまたはPNG写真を選択してください。";return}
+ imgs.forEach(file=>{
+  const item=document.createElement("figure");item.style.margin="0";
+  const img=document.createElement("img"),label=document.createElement("figcaption");
+  label.textContent=file.name;label.style.fontSize="12px";label.style.maxWidth="110px";label.style.overflowWrap="anywhere";
+  img.alt=file.name;img.style.display="block";
+  item.append(img,label);container.append(item);
+  const reader=new FileReader();
+  reader.onload=()=>{img.src=String(reader.result)};
+  reader.onerror=()=>{label.textContent=file.name+"：読み込み失敗"};
+  img.onerror=()=>{label.textContent=file.name+"：この形式はブラウザで表示できません。JPG・PNGで試してください。"};
+  try{reader.readAsDataURL(file)}catch(err){label.textContent=file.name+"：画像を読み込めません"}
+ });
+});
 $("shoe-form").addEventListener("submit",e=>{e.preventDefault();if(sizes.some(s=>!Number.isInteger(Number($("size-"+s).value))||Number($("size-"+s).value)<0))){$("feedback").textContent="数量は0以上の整数にしてください。";return}if(count()<10){$("feedback").textContent="合計10足以上で入力してください。";return}try{localStorage.setItem(key,JSON.stringify(get()));$("feedback").textContent="下書きをこの端末に保存しました。添付ファイル本体は保存されません。"}catch(e){$("feedback").textContent="保存できませんでした。端末の保存設定を確認してください。"}});
 $("export").addEventListener("click",()=>{const data=get(),text="SHOES-001 制作プラン（下書き）\n\n"+Object.entries(data.fields).map(([a,b])=>a+"： "+b).join("\n")+"\n\nサイズ別数量：\n"+Object.entries(data.sizes).filter(([k,v])=>Number(v)>0).map(([k,v])=>k+"cm： "+v+"足").join("\n")+"\n合計： "+count()+"足\n※工場見積・製造可否未確認";const u=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="SHOES-001_制作プラン.txt";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
 fields.forEach(id=>$(id).addEventListener("input",preview));preview();
