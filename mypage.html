@@ -37,7 +37,7 @@ function showDraft(){
  $("draft-info").textContent=text?"靴の下書きがあります。案件名と一緒に保存できます。":"保存済みの靴の下書きはありません。案件名のみ保存します。";
  if(!text){$("draft-preview").textContent="靴の仕様が未登録です。先に靴ページで下書きを保存してください。";return}
  const data=JSON.parse(text),sum=Object.values(data.sizes).reduce((n,v)=>n+(Number(v)||0),0);
- $("draft-preview").textContent="ブランド名："+data.fields.brand+"\\nカラー："+data.fields.color+"\\n合計："+sum+"足（画像は保存対象外）";
+ $("draft-preview").textContent="ブランド名："+data.fields.brand+"\nカラー："+data.fields.color+"\n合計："+sum+"足（画像は保存対象外）";
 }
 showDraft();
 window.addEventListener("pageshow",showDraft);
