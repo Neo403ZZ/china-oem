@@ -41,7 +41,7 @@ window.previewShoePhoto = function(input) {
  info.textContent=files.length+' / 10点：'+(files.map(function(f){return f.name}).join('、')||'未選択');
  status.textContent=files.length?'画像 '+files.length+'件を読み込み中':'画像未選択';
  files.slice(0,10).forEach(function(file){
-   if(!(file.type.indexOf('image/')===0 || /\\.(png|jpe?g|gif|webp|bmp)$/i.test(file.name))){status.textContent='JPG・PNG形式の写真を選んでください';return;}
+   if(!(file.type.indexOf('image/')===0 || /\\.(png|jpe?g|gif|webp|bmp)$/i.test(file.name))){var note=document.createElement('p');note.textContent='資料：'+file.name+'（プレビュー対象外）';area.appendChild(note);return;}
    var img=document.createElement('img');img.alt=file.name;img.style.cssText='display:block;width:180px;height:155px;object-fit:contain;background:#eef3f7;border:1px solid #b5c5d6;margin:8px;';
    area.appendChild(img);
    var reader=new FileReader();
