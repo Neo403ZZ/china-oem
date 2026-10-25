@@ -7,7 +7,7 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 </style></head><body>
 <header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a>　|　<a href="mypage.html">マイページ・クラウド保存</a></header>
 <main>
-<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.2 添付資料10点対応</p>
+<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.3 添付資料ZIP書き出し</p>
 <h1>自分だけのスニーカーをつくる</h1>
 <p>10足からの製作を目標に、色・素材・ロゴだけの変更から、甲のデザイン変更まで相談できます。</p>
 <div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。この画面では端末に下書きを保存します。その後マイページからGoogleログインしてクラウドに案件登録できます。画像のクラウド保存は未実装です。</div>
@@ -67,8 +67,8 @@ window.updateShoeSpec();
 
 </script></section>
 <section class="card"><h2>工場見積の事前チェック（準備機能）</h2><p class="muted">入力済みの制作仕様から見積依頼のための確認票を作成します。工場への自動送信や正式発注は行いません。</p>
-<button type="button" id="quote-check">見積準備をチェック</button> <button type="button" class="secondary" id="quote-export">見積確認票をTXTで保存</button>
-<p id="quote-result" role="status" class="notice">見積準備の入力を確認できます。</p><pre id="quote-preview" class="preview" aria-live="polite"></pre>
+<button type="button" id="quote-check">見積準備をチェック</button> <button type="button" id="quote-zip">仕様書＋添付資料をZIP保存</button> <button type="button" class="secondary" id="quote-export">見積確認票をTXTで保存</button>
+<p class="muted">ZIPには仕様書TXTと選択中の参考資料の実ファイルをまとめます。1点15MB以下・合計50MB以下。保存先はご自身の端末のみです。</p><p id="quote-result" role="status" class="notice">見積準備の入力を確認できます。</p><pre id="quote-preview" class="preview" aria-live="polite"></pre>
 <p class="muted">数量10足は希望条件です。実際の最低製造数量・単価・納期・素材・サンプル代・輸送・関税は工場確認が必要です。</p></section>
 <section class="card"><h2>今後提供予定の機能</h2>
 <p>AIデザイン生成（1案件5回無料・追加5回500円税込）、日本語・中国語PDF、会員別クラウド保存、複数工場比較、段階別承認・決済、第三者全数検品、品質保証、分割配送、再注文、ブランド紹介ページ。</p>
@@ -106,6 +106,45 @@ $("quote-export").addEventListener("click",()=>{
  const url=URL.createObjectURL(new Blob([quoteText()],{type:"text/plain;charset=utf-8"}));
  const a=document.createElement("a");a.href=url;a.download="SHOES-001_工場見積事前確認票.txt";a.click();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+function zipUint16(n){return [n&255,(n>>>8)&255]}
+function zipUint32(n){return [n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255]}
+const zipTable=Array.from({length:256},(_,i)=>{let c=i;for(let k=0;k<8;k++)c=c&1?0xedb88320^(c>>>1):c>>>1;return c>>>0});
+function crc32(bytes){let c=0xffffffff;for(const b of bytes)c=zipTable[(c^b)&255]^(c>>>8);return (c^0xffffffff)>>>0}
+function makeZip(entries){
+ const parts=[],central=[];let offset=0;
+ for(const e of entries){
+  const name=new TextEncoder().encode(e.name),data=e.bytes,crc=crc32(data),flags=0x800;
+  const local=new Uint8Array([80,75,3,4,...zipUint16(20),...zipUint16(flags),...zipUint16(0),...zipUint16(0),...zipUint16(0),...zipUint32(crc),...zipUint32(data.length),...zipUint32(data.length),...zipUint16(name.length),0,0]);
+  parts.push(local,name,data);
+  const center=new Uint8Array([80,75,1,2,...zipUint16(20),...zipUint16(20),...zipUint16(flags),0,0,0,0,0,0,...zipUint32(crc),...zipUint32(data.length),...zipUint32(data.length),...zipUint16(name.length),0,0,0,0,0,0,0,0,0,0,0,0,...zipUint32(offset)]);
+  central.push(center,name);offset+=local.length+name.length+data.length;
+ }
+ const centralSize=central.reduce((n,p)=>n+p.length,0);
+ const end=new Uint8Array([80,75,5,6,0,0,0,0,...zipUint16(entries.length),...zipUint16(entries.length),...zipUint32(centralSize),...zipUint32(offset),0,0]);
+ return new Blob([...parts,...central,end],{type:"application/zip"});
+}
+$("quote-zip").addEventListener("click",async()=>{
+ if(!updateQuote()){alert("ブランド名・カラー・数量を確認してください。");return}
+ const btn=$("quote-zip"),files=Array.from($("files").files||[]);
+ if(files.length>10){alert("添付資料は10点以内にしてください。");return}
+ const allowed=/\.(jpe?g|png|gif|webp|bmp|heic|heif|pdf|txt)$/i;
+ if(files.some(f=>f.size>15*1024*1024||!allowed.test(f.name))||files.reduce((n,f)=>n+f.size,0)>50*1024*1024){
+  alert("添付はJPG・PNG・HEIC・WebP・GIF・BMP・PDF・TXT、1点15MB以下・合計50MB以下にしてください。");return
+ }
+ btn.disabled=true;$("quote-result").textContent="ZIPを作成中です。";
+ try{
+  const entries=[{name:"SHOES-001_見積事前確認票.txt",bytes:new TextEncoder().encode(quoteText())}];
+  for(let i=0;i<files.length;i++){
+   const file=files[i],safe=file.name.replace(/[\\/\\\\:\\x00-\\x1f]/g,"_").slice(0,120);
+   entries.push({name:"attachments/"+String(i+1).padStart(2,"0")+"_"+safe,bytes:new Uint8Array(await file.arrayBuffer())});
+  }
+  const url=URL.createObjectURL(makeZip(entries)),a=document.createElement("a");
+  a.href=url;a.download="SHOES-001_見積資料一式.zip";document.body.append(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  $("quote-result").textContent="ZIPを作成しました。工場には自動送信されていません。";
+ }catch(e){$("quote-result").textContent="ZIP保存に失敗しました："+(e.message||e)}
+ finally{btn.disabled=false}
 });
 fields.forEach(id=>$(id).addEventListener("input",preview));preview();
 })();
