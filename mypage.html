@@ -41,6 +41,11 @@ function showDraft(){
 }
 showDraft();
 window.addEventListener("pageshow",showDraft);
+function clearDeviceDraft(){
+ try{localStorage.removeItem(draftKey)}catch(e){}
+ $("project-name").value="";$("save-feedback").textContent="";
+ showDraft();
+}
 
 if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("YOUR_")){
  state.textContent="クラウド接続は準備中です。現在、ログイン・オンライン保存は利用できません。";
@@ -53,8 +58,17 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
    import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js")
   ]);
   const app=initializeApp(config),auth=getAuth(app),db=getFirestore(app);
+  let lastUid=null,refreshToken=0;
+  try{lastUid=sessionStorage.getItem("mybrand-active-user-uid")}catch(e){}
   const error=e=>{state.textContent="処理できませんでした："+(e.code||e.message||"不明なエラー");state.className="error"};
   async function refresh(user){
+   const token=++refreshToken;
+   const uid=user?.uid||null;
+   if(!uid||(lastUid&&lastUid!==uid)){
+    clearDeviceDraft();
+   }
+   lastUid=uid;
+   try{if(uid)sessionStorage.setItem("mybrand-active-user-uid",uid);else sessionStorage.removeItem("mybrand-active-user-uid")}catch(e){}
    $("login").disabled=!!user;$("logout").disabled=!user;$("create").disabled=!user;
    $("projects").replaceChildren();
    if(!user){state.textContent="未ログインです。Googleでログインしてください。";return}
@@ -62,6 +76,7 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
    try{
     const q=query(collection(db,"users",user.uid,"projects"),orderBy("createdAt","desc"));
     const docs=await getDocs(q);
+    if(token!==refreshToken||auth.currentUser?.uid!==uid)return;
     if(!docs.size){const li=document.createElement("li");li.textContent="保存された案件はありません。";$("projects").append(li)}
     docs.forEach(d=>{
      const li=document.createElement("li"),title=document.createElement("strong");
@@ -83,7 +98,7 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
    }catch(e){error(e)}
   }
   $("login").onclick=()=>signInWithPopup(auth,new GoogleAuthProvider()).catch(error);
-  $("logout").onclick=()=>signOut(auth).catch(error);
+  $("logout").onclick=async()=>{try{await signOut(auth);clearDeviceDraft();$("projects").replaceChildren();state.textContent="ログアウトしました。端末に保存した靴の下書きも消去しました。";}catch(e){error(e)}};
   $("create").onclick=async()=>{
    if(!auth.currentUser){state.textContent="ログインしてください。";return}
    const name=$("project-name").value.trim();
