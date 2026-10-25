@@ -3,13 +3,13 @@
 <title>マイページ | MY BRAND OEM</title>
 <style>body{margin:0;font:16px/1.7 system-ui,"Yu Gothic",sans-serif;background:#f5f7fb;color:#172840}header{background:#10213c;color:white;padding:20px}header a{color:white}main{max-width:840px;margin:35px auto;padding:0 18px}.card{background:white;border:1px solid #dce4ed;border-radius:12px;padding:24px;margin:18px 0}button{background:#1767ad;color:white;border:0;padding:11px 18px;border-radius:8px;cursor:pointer;margin:4px}button:disabled{background:#9baab7;cursor:not-allowed}input{padding:10px;border:1px solid #becbd8;border-radius:6px;width:100%;box-sizing:border-box}label{display:block;margin:10px 0}a{color:#1767ad}.muted{color:#607082}li{margin:8px 0}.error{color:#a42c2c}#projects{padding:0;list-style:none}#projects li{padding:12px;border-bottom:1px solid #ddd}</style></head>
 <body><header><a href="index.html">← MY BRAND OEM｜TOP</a></header><main>
-<p class="muted">会員マイページ｜クラウド保存開発準備版 v0.2</p><h1>マイページ</h1>
+<p class="muted">会員マイページ｜靴仕様クラウド連携 v0.3</p><h1>マイページ</h1>
 <div class="card"><h2>Googleアカウントでログイン</h2>
 <p id="state" role="status">接続設定を確認しています…</p>
 <button id="login" disabled>Googleでログイン</button><button id="logout" disabled>ログアウト</button>
 <p class="muted">Googleログインを押すと、Googleのアカウント選択画面が別ウィンドウで開きます。初回は許可の確認が表示されることがあります。ログインと保存の成否は画面の状態表示で確認してください。</p></div>
 <div class="card"><h2>あなたの制作案件</h2><label>案件名<input id="project-name" maxlength="80" placeholder="例：スニーカー第1弾"></label>
-<p id="draft-info" class="muted"></p><button id="create" disabled>新規案件をクラウド保存</button><ul id="projects"><li>ログイン後、本人の案件のみ表示します。</li></ul>
+<p id="draft-info" class="muted"></p><pre id="draft-preview" style="white-space:pre-wrap;background:#f3f6fa;border-radius:8px;padding:12px"></pre><button id="create" disabled>新規案件をクラウド保存</button><p id="save-feedback" role="status" class="muted"></p><ul id="projects"><li>ログイン後、本人の案件のみ表示します。</li></ul>
 <p class="muted">案件データはログイン中ユーザー固有の領域に保存する設計です。靴ページで保存済みの下書き（テキスト・数量）も新規案件に保存できます。写真のクラウドアップロードは未実装です。</p></div>
 <div class="card"><h2>すでに利用できる機能</h2><p><a href="shoes.html">靴カテゴリーの仕様作成・端末内の下書き保存はこちら</a></p></div>
 </main>
@@ -32,7 +32,15 @@ function validateDraft(text){
  }catch{return null}
 }
 function localDraft(){try{return validateDraft(localStorage.getItem(draftKey))}catch{return null}}
-$("draft-info").textContent=localDraft()?"靴の下書きがあります。新規案件と一緒に保存します。":"保存済みの靴の下書きはありません。案件名のみ保存します。";
+function showDraft(){
+ const text=localDraft();
+ $("draft-info").textContent=text?"靴の下書きがあります。案件名と一緒に保存できます。":"保存済みの靴の下書きはありません。案件名のみ保存します。";
+ if(!text){$("draft-preview").textContent="靴の仕様が未登録です。先に靴ページで下書きを保存してください。";return}
+ const data=JSON.parse(text),sum=Object.values(data.sizes).reduce((n,v)=>n+(Number(v)||0),0);
+ $("draft-preview").textContent="ブランド名："+data.fields.brand+"\\nカラー："+data.fields.color+"\\n合計："+sum+"足（画像は保存対象外）";
+}
+showDraft();
+window.addEventListener("pageshow",showDraft);
 
 if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("YOUR_")){
  state.textContent="クラウド接続は準備中です。現在、ログイン・オンライン保存は利用できません。";
@@ -60,6 +68,7 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
      title.textContent=d.data().name||"無題の案件";li.append(title);
      const draft=validateDraft(d.data().shoeDraft);
      if(draft){
+      const summary=JSON.parse(draft);const subtitle=document.createElement("p");subtitle.className="muted";subtitle.textContent="ブランド："+summary.fields.brand+"／カラー："+summary.fields.color;li.append(subtitle);
       const btn=document.createElement("button");btn.type="button";
       btn.textContent="靴の下書きを復元";
       btn.onclick=()=>{
@@ -78,9 +87,9 @@ if(!config||!config.apiKey||!config.projectId||String(config.apiKey).includes("Y
   $("create").onclick=async()=>{
    if(!auth.currentUser){state.textContent="ログインしてください。";return}
    const name=$("project-name").value.trim();
-   if(!name){state.textContent="案件名を入力してください。";return}
+   if(!name){$("save-feedback").textContent="案件名を入力してください。";return}
    $("create").disabled=true;
-   try{await addDoc(collection(db,"users",auth.currentUser.uid,"projects"),{name:name.slice(0,80),category:"shoes",status:"draft",shoeDraft:localDraft()||"",createdAt:serverTimestamp()});$("project-name").value="";await refresh(auth.currentUser)}
+   try{const draft=localDraft()||"";await addDoc(collection(db,"users",auth.currentUser.uid,"projects"),{name:name.slice(0,80),category:"shoes",status:"draft",shoeDraft:draft,createdAt:serverTimestamp()});$("project-name").value="";$("save-feedback").textContent="クラウド保存完了："+name+(draft?"（靴の仕様も保存）":"（案件名のみ）");await refresh(auth.currentUser)}
    catch(e){error(e)}finally{$("create").disabled=!auth.currentUser}
   };
   onAuthStateChanged(auth,refresh,error);
