@@ -5,12 +5,12 @@
 :root{--navy:#172840;--blue:#1767ad;--line:#dce4ed;--gray:#627286}*{box-sizing:border-box}body{margin:0;font-family:system-ui,"Yu Gothic",sans-serif;color:var(--navy);line-height:1.7;background:#f6f8fc}
 header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-decoration:none}main{max-width:960px;margin:auto;padding:28px 18px 70px}h1{font-size:clamp(27px,5vw,42px)}h2{margin-top:0;font-size:22px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin:18px 0}.notice{background:#fff5d9;padding:13px 16px;border-radius:10px;font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:block;font-weight:700;margin:12px 0 5px}input,select,textarea{width:100%;border:1px solid #b5c5d6;border-radius:7px;padding:10px;font:inherit}textarea{min-height:95px}.thumbs{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}.thumbs img{width:110px;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.preview{white-space:pre-wrap;background:#f2f6fb;padding:15px;border-radius:8px;font-size:14px}button,.btn{background:var(--blue);border:none;border-radius:8px;padding:12px 17px;color:white;cursor:pointer;text-decoration:none;display:inline-block;font-size:15px}button.secondary{background:#e9eff6;color:var(--navy)}.muted{color:var(--gray);font-size:14px}.row{display:flex;gap:12px;flex-wrap:wrap}.status{font-weight:700}footer{padding:30px;text-align:center;color:var(--gray)}@media(max-width:640px){.grid{grid-template-columns:1fr}.card{padding:18px}}
 </style></head><body>
-<header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a>　|　<a href="mypage.html">マイページ（準備中）</a></header>
+<header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a>　|　<a href="mypage.html">マイページ・クラウド保存</a></header>
 <main>
-<p class="muted">靴カテゴリー / SHOES-001 / Ver.1.9 構文修正版</p>
+<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.0 クラウド連携案内</p>
 <h1>自分だけのスニーカーをつくる</h1>
 <p>10足からの製作を目標に、色・素材・ロゴだけの変更から、甲のデザイン変更まで相談できます。</p>
-<div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。入力データはこのブラウザ内にのみ保存されます。</div>
+<div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。この画面では端末に下書きを保存します。その後マイページからGoogleログインしてクラウドに案件登録できます。画像のクラウド保存は未実装です。</div>
 <section class="card"><h2>選べる製作方法</h2>
 <div class="grid"><div><strong>A｜簡単カスタマイズ</strong><p>工場の既存スニーカーを使い、素材・カラー・ロゴを変更します。</p></div><div><strong>B｜デザインカスタマイズ</strong><p>既存木型・靴底を利用し、甲の形状・パーツ・縫製も相談します。</p></div></div>
 <p class="muted">新規木型・新規靴底金型などのフルオリジナルは別途個別相談です。</p></section>
@@ -27,7 +27,7 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 <label for="details">希望デザイン・素材・ロゴ・包装の詳細</label><textarea id="details" placeholder="スニーカーのイメージや希望を入力"></textarea>
 <label for="files">参考写真・ロゴ・資料（写真を選ぶと下に表示）</label><input id="files" type="file" accept="image/*,.pdf,.txt" multiple onchange="window.previewShoePhoto(this)"><p id="file-names" class="muted" role="status">未選択</p><p id="preview-debug" class="notice" role="status">画像表示機能：JavaScript待機中（Ver.1.6）</p><div id="file-previews" class="thumbs" aria-label="画像プレビュー"></div>
 <div class="row"><button type="submit">この端末に下書きを保存</button><button type="button" class="secondary" id="export">仕様をTXT出力</button></div>
-<p class="muted" id="feedback" role="status"></p><h3>制作仕様プレビュー</h3><pre class="preview" id="spec-preview" aria-live="polite">仕様プレビューを準備しています…</pre><p id="spec-debug" class="muted" role="status">プレビュー初期化中</p><p class="muted">ファイル本体は保存・送信されません。画面を閉じると添付は消えます。画像をAI生成する機能は今後実装します。</p>
+<p class="muted" id="feedback" role="status"></p><p><a class="btn" href="mypage.html">下書きを保存したら、マイページでクラウド保存へ進む</a></p><h3>制作仕様プレビュー</h3><pre class="preview" id="spec-preview" aria-live="polite">仕様プレビューを準備しています…</pre><p id="spec-debug" class="muted" role="status">プレビュー初期化中</p><p class="muted">ファイル本体は保存・送信されません。画面を閉じると添付は消えます。画像をAI生成する機能は今後実装します。</p>
 </form>
 <script>
 window.previewShoePhoto = function(input) {
