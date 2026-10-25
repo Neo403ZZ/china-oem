@@ -7,7 +7,7 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 </style></head><body>
 <header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a></header>
 <main>
-<p class="muted">靴カテゴリー / SHOES-001 / Ver.1.5 診断対応版</p>
+<p class="muted">靴カテゴリー / SHOES-001 / Ver.1.6 修正版</p>
 <h1>自分だけのスニーカーをつくる</h1>
 <p>10足からの製作を目標に、色・素材・ロゴだけの変更から、甲のデザイン変更まで相談できます。</p>
 <div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。入力データはこのブラウザ内にのみ保存されます。</div>
@@ -25,10 +25,32 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 <h3>サイズ別数量</h3><p class="muted">合計10足以上を希望数として入力。サイズごとの製作可否は工場確認が必要です。</p>
 <div class="grid" id="sizes"></div><p class="status" id="total">合計：10足</p>
 <label for="details">希望デザイン・素材・ロゴ・包装の詳細</label><textarea id="details" placeholder="スニーカーのイメージや希望を入力"></textarea>
-<label for="files">参考写真・ロゴ・資料（写真を選ぶと下に表示）</label><input id="files" type="file" accept="image/*,.pdf,.txt" multiple><p id="file-names" class="muted" role="status">未選択</p><p id="preview-debug" class="notice" role="status">準備中：画像表示機能を確認しています…</p><div id="file-previews" class="thumbs" aria-label="画像プレビュー"></div>
+<label for="files">参考写真・ロゴ・資料（写真を選ぶと下に表示）</label><input id="files" type="file" accept="image/*,.pdf,.txt" multiple onchange="window.previewShoePhoto(this)"><p id="file-names" class="muted" role="status">未選択</p><p id="preview-debug" class="notice" role="status">画像表示機能：JavaScript待機中（Ver.1.6）</p><div id="file-previews" class="thumbs" aria-label="画像プレビュー"></div>
 <div class="row"><button type="submit">この端末に下書きを保存</button><button type="button" class="secondary" id="export">仕様をTXT出力</button></div>
 <p class="muted" id="feedback" role="status"></p><h3>制作仕様プレビュー</h3><pre class="preview" id="spec-preview" aria-live="polite"></pre><p class="muted">ファイル本体は保存・送信されません。画面を閉じると添付は消えます。画像をAI生成する機能は今後実装します。</p>
-</form></section>
+</form>
+<script>
+window.previewShoePhoto = function(input) {
+ var info=document.getElementById('file-names');
+ var status=document.getElementById('preview-debug');
+ var area=document.getElementById('file-previews');
+ var files=Array.from(input.files||[]);
+ area.innerHTML='';
+ info.textContent=files.length?'選択：'+files.map(function(f){return f.name}).join('、'):'未選択';
+ status.textContent=files.length?'画像 '+files.length+'件を読み込み中':'画像未選択';
+ files.slice(0,10).forEach(function(file){
+   if(!(file.type.indexOf('image/')===0 || /\\.(png|jpe?g|gif|webp|bmp)$/i.test(file.name))){status.textContent='JPG・PNG形式の写真を選んでください';return;}
+   var img=document.createElement('img');img.alt=file.name;img.style.cssText='display:block;width:180px;height:155px;object-fit:contain;background:#eef3f7;border:1px solid #b5c5d6;margin:8px;';
+   area.appendChild(img);
+   var reader=new FileReader();
+   reader.onload=function(e){img.src=e.target.result;status.textContent='画像読込完了：'+file.name;};
+   reader.onerror=function(){status.textContent='読み込みエラー：'+file.name;};
+   img.onerror=function(){status.textContent='画像表示できません：'+file.name;};
+   reader.readAsDataURL(file);
+ });
+};
+document.getElementById('preview-debug').textContent='画像表示機能：準備OK（Ver.1.6）';
+</script></section>
 <section class="card"><h2>今後提供予定の機能</h2>
 <p>AIデザイン生成（1案件5回無料・追加5回500円税込）、日本語・中国語PDF、会員別クラウド保存、複数工場比較、段階別承認・決済、第三者全数検品、品質保証、分割配送、再注文、ブランド紹介ページ。</p>
 <p class="muted">これらは決定済みの仕様方針ですが、このデモでは未実装です。品質保証の詳細条件・工場対応・法令適合は正式運用前に確定します。</p></section>
@@ -41,32 +63,6 @@ function count(){return sizes.reduce((sum,s)=>sum+(Number($("size-"+s).value)||0
 function render(){$("total").textContent="合計："+count()+"足"+(count()<10?"（10足未満）":"");preview()}
 function preview(){if(!$("spec-preview"))return;const x=fields.map(id=>id+"： "+$(id).value).join("\n");$("spec-preview").textContent="SHOES-001 / 仮仕様書\n"+x+"\n\n数量： "+count()+"足\n"+sizes.filter(s=>Number($("size-"+s).value)>0).map(s=>s+"cm： "+$("size-"+s).value+"足").join("、")+"\n製作可否・価格・納期：未確認"}function get(){return {fields:Object.fromEntries(fields.map(i=>[i,$(i).value])),sizes:Object.fromEntries(sizes.map(s=>[s,$("size-"+s).value]))}}
 try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved){fields.forEach(i=>{if(saved.fields?.[i]!==undefined)$(i).value=saved.fields[i]});sizes.forEach(s=>{if(saved.sizes?.[s]!==undefined)$("size-"+s).value=saved.sizes[s]})}}catch(e){}render();
-const previewStatus=$("preview-debug");
-previewStatus.textContent="画像表示機能：準備OK（Ver.1.5）。写真を選択してください。";
-function showPhotos(){
- const input=$("files"),info=$("file-names"),area=$("file-previews");
- const files=Array.from(input.files||[]);
- area.textContent="";
- info.textContent=files.length?files.length+"件選択："+files.map(f=>f.name).join("、"):"未選択";
- previewStatus.textContent=files.length?"選択を検出しました。画像を読み込んでいます…":"ファイルが選択されていません";
- if(!files.length)return;
- const candidates=files.filter(f=>/^image\//.test(f.type)||/\.(jpg|jpeg|png|gif|webp|bmp|heic|heif)$/i.test(f.name)).slice(0,10);
- if(!candidates.length){previewStatus.textContent="画像ではないファイルです。JPGまたはPNGを選んでください。";return}
- candidates.forEach(file=>{
-  const panel=document.createElement("div"),img=document.createElement("img"),name=document.createElement("div");
-  panel.style.cssText="display:inline-block;vertical-align:top;margin:6px;padding:7px;background:#fff;border:1px solid #dce4ed;border-radius:8px";
-  img.style.cssText="display:block;width:150px;height:135px;object-fit:contain;background:#eef3f7";
-  name.textContent=file.name;name.style.cssText="max-width:150px;font-size:12px;overflow-wrap:anywhere";
-  panel.append(img,name);area.append(panel);
-  const reader=new FileReader();
-  reader.onload=function(){img.src=reader.result;previewStatus.textContent="読み込み完了。写真が表示されない場合、画像形式をJPGに変えて試してください。"};
-  reader.onerror=function(){previewStatus.textContent="ファイル読込エラー："+file.name};
-  img.onerror=function(){previewStatus.textContent="画像表示エラー："+file.name+"（JPG・PNGで試してください）"};
-  try{reader.readAsDataURL(file)}catch(e){previewStatus.textContent="画像処理エラー："+e.message}
- });
-}
-$("files").addEventListener("change",showPhotos);
-$("files").addEventListener("input",showPhotos);
 $("shoe-form").addEventListener("submit",e=>{e.preventDefault();if(sizes.some(s=>!Number.isInteger(Number($("size-"+s).value))||Number($("size-"+s).value)<0))){$("feedback").textContent="数量は0以上の整数にしてください。";return}if(count()<10){$("feedback").textContent="合計10足以上で入力してください。";return}try{localStorage.setItem(key,JSON.stringify(get()));$("feedback").textContent="下書きをこの端末に保存しました。添付ファイル本体は保存されません。"}catch(e){$("feedback").textContent="保存できませんでした。端末の保存設定を確認してください。"}});
 $("export").addEventListener("click",()=>{const data=get(),text="SHOES-001 制作プラン（下書き）\n\n"+Object.entries(data.fields).map(([a,b])=>a+"： "+b).join("\n")+"\n\nサイズ別数量：\n"+Object.entries(data.sizes).filter(([k,v])=>Number(v)>0).map(([k,v])=>k+"cm： "+v+"足").join("\n")+"\n合計： "+count()+"足\n※工場見積・製造可否未確認";const u=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="SHOES-001_制作プラン.txt";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)});
 fields.forEach(id=>$(id).addEventListener("input",preview));preview();
