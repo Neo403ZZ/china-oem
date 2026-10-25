@@ -7,7 +7,7 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 </style></head><body>
 <header><a href="index.html">← MY BRAND OEM｜TOPに戻る</a>　|　<a href="mypage.html">マイページ・クラウド保存</a></header>
 <main>
-<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.1 見積準備チェック</p>
+<p class="muted">靴カテゴリー / SHOES-001 / Ver.2.2 添付資料10点対応</p>
 <h1>自分だけのスニーカーをつくる</h1>
 <p>10足からの製作を目標に、色・素材・ロゴだけの変更から、甲のデザイン変更まで相談できます。</p>
 <div class="notice"><strong>現在は入力・保存用の試作画面です。</strong> 10足での製作、AI画像生成、Googleログイン、工場への見積依頼・決済はまだ提供していません。この画面では端末に下書きを保存します。その後マイページからGoogleログインしてクラウドに案件登録できます。画像のクラウド保存は未実装です。</div>
@@ -25,7 +25,7 @@ header{background:#10213c;color:#fff;padding:22px 5%}header a{color:white;text-d
 <h3>サイズ別数量</h3><p class="muted">合計10足以上を希望数として入力。サイズごとの製作可否は工場確認が必要です。</p>
 <div class="grid" id="sizes"></div><p class="status" id="total">合計：10足</p>
 <label for="details">希望デザイン・素材・ロゴ・包装の詳細</label><textarea id="details" placeholder="スニーカーのイメージや希望を入力"></textarea>
-<label for="files">参考写真・ロゴ・資料（写真を選ぶと下に表示）</label><input id="files" type="file" accept="image/*,.pdf,.txt" multiple onchange="window.previewShoePhoto(this)"><p id="file-names" class="muted" role="status">未選択</p><p id="preview-debug" class="notice" role="status">画像表示機能：JavaScript待機中（Ver.1.6）</p><div id="file-previews" class="thumbs" aria-label="画像プレビュー"></div>
+<label for="files">工場へ共有する参考資料（写真・ロゴ・手書きメモ写真／合計10点まで）</label><input id="files" type="file" accept="image/*,.pdf,.txt" multiple onchange="window.previewShoePhoto(this)"><p id="file-names" class="muted" role="status">0 / 10点</p><p class="muted">スマホで撮影した手書きメモも使用できます。PNG・JPG推奨。PDF・TXTも選択可能です。添付データは現在この画面でのみ保持され、クラウド保存・工場送信されません。</p><p id="preview-debug" class="notice" role="status">画像表示機能：JavaScript待機中（Ver.1.6）</p><div id="file-previews" class="thumbs" aria-label="画像プレビュー"></div>
 <div class="row"><button type="submit">この端末に下書きを保存</button><button type="button" class="secondary" id="export">仕様をTXT出力</button></div>
 <p class="muted" id="feedback" role="status"></p><p><a class="btn" href="mypage.html">下書きを保存したら、マイページでクラウド保存へ進む</a></p><h3>制作仕様プレビュー</h3><pre class="preview" id="spec-preview" aria-live="polite">仕様プレビューを準備しています…</pre><p id="spec-debug" class="muted" role="status">プレビュー初期化中</p><p class="muted">ファイル本体は保存・送信されません。画面を閉じると添付は消えます。画像をAI生成する機能は今後実装します。</p>
 </form>
@@ -36,7 +36,9 @@ window.previewShoePhoto = function(input) {
  var area=document.getElementById('file-previews');
  var files=Array.from(input.files||[]);
  area.innerHTML='';
- info.textContent=files.length?'選択：'+files.map(function(f){return f.name}).join('、'):'未選択';
+ if(files.length>10){status.textContent='最大10点までです。ファイルを選び直してください。';info.textContent=files.length+' / 10点（超過）';input.value='';window.oemAttachments=[];return;}
+ window.oemAttachments=files;
+ info.textContent=files.length+' / 10点：'+(files.map(function(f){return f.name}).join('、')||'未選択');
  status.textContent=files.length?'画像 '+files.length+'件を読み込み中':'画像未選択';
  files.slice(0,10).forEach(function(file){
    if(!(file.type.indexOf('image/')===0 || /\\.(png|jpe?g|gif|webp|bmp)$/i.test(file.name))){status.textContent='JPG・PNG形式の写真を選んでください';return;}
@@ -85,7 +87,7 @@ $("export").addEventListener("click",()=>{const data=get(),text="SHOES-001 制�
 function quoteText(){
  const d=get(),total=count();
  const qty=sizes.filter(k=>Number(d.sizes[k])>0).map(k=>k+"cm "+d.sizes[k]+"足").join("、");
- return ["SHOES-001 工場見積 事前確認票（未送信・未発注）","ブランド名："+d.fields.brand,"製作方法："+d.fields.mode,"希望カラー："+d.fields.color,"素材："+d.fields.material,"ロゴ位置："+d.fields.logo,"梱包："+d.fields.pack,"希望詳細："+d.fields.details,"希望合計："+total+"足","サイズ別："+qty,"確認事項：製造可否、工場MOQ、サンプル・量産単価、納期、品質基準、梱包、輸送、関税","写真・ロゴファイルは本TXTに添付されません。","この確認票は工場へ自動送信されません。"].join("\n");
+ return ["SHOES-001 工場見積 事前確認票（未送信・未発注）","ブランド名："+d.fields.brand,"製作方法："+d.fields.mode,"希望カラー："+d.fields.color,"素材："+d.fields.material,"ロゴ位置："+d.fields.logo,"梱包："+d.fields.pack,"希望詳細："+d.fields.details,"希望合計："+total+"足","サイズ別："+qty,"確認事項：製造可否、工場MOQ、サンプル・量産単価、納期、品質基準、梱包、輸送、関税","添付資料："+(Array.from($("files").files||[]).map((f,i)=>(i+1)+". "+f.name).join("、")||"なし"),"注意：このTXTには実ファイル本体は含まれません。工場に渡す際は資料ファイルも別途同封してください。","この確認票は工場へ自動送信されません。"].join("\n");
 }
 function updateQuote(){
  const d=get(),invalid=sizes.some(k=>{const n=Number(d.sizes[k]);return !Number.isInteger(n)||n<0});
@@ -93,6 +95,7 @@ function updateQuote(){
  if(!d.fields.brand.trim())issues.push("ブランド名");
  if(!d.fields.color.trim())issues.push("カラー");
  if(invalid||count()<10)issues.push("希望数量（合計10足以上・整数）");
+ if($("files").files.length>10)issues.push("資料は最大10点");
  $("quote-result").textContent=issues.length?"要確認："+issues.join("、"):"入力の基本条件は確認済み。工場の製造可否・価格・MOQは未確認です。";
  $("quote-preview").textContent=quoteText();
  return issues.length===0;
